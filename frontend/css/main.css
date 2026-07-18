@@ -179,18 +179,23 @@ input[type=checkbox]:focus {
     height: 100%;
 }
 
-.floating-back-btn {
+.floating-controls {
     position: absolute;
     top: 30px;
     right: 30px;
     z-index: 10000;
+    display: flex;
+    gap: 15px;
+}
+
+.floating-btn {
     background: rgba(0, 164, 220, 0.85); /* Matches jellyfin blue with transparency */
     color: #FFF;
     border: none;
     border-radius: 50px;
     font-size: 0.8em;
     font-weight: bold;
-    padding: 15px 30px;
+    padding: 15px;
     cursor: pointer;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(10px);
@@ -199,20 +204,118 @@ input[type=checkbox]:focus {
     align-items: center;
     justify-content: center;
     outline: none;
+}
+
+.floating-back-btn {
+    padding: 15px 30px;
     text-transform: uppercase;
     letter-spacing: 1px;
 }
 
-.floating-back-btn:hover,
-.floating-back-btn:focus {
+.floating-settings-btn {
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+}
+
+.floating-btn:hover,
+.floating-btn:focus {
     background: #00A4DC;
     transform: scale(1.05);
     box-shadow: 0 6px 20px rgba(0, 164, 220, 0.4);
 }
 
-.floating-back-btn svg {
-    margin-right: 10px;
+.floating-btn svg {
     fill: currentColor;
     width: 24px;
     height: 24px;
+}
+
+.floating-back-btn svg {
+    margin-right: 10px;
+}
+
+/* Premium Modal Styles */
+.modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 10100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(10px);
+}
+
+.modal-content {
+    background: #1c1c1c;
+    border: 2px solid #292929;
+    border-radius: 12px;
+    padding: 40px;
+    width: 50%;
+    min-width: 500px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+    text-align: center;
+}
+
+.modal-content h2 {
+    margin-top: 0;
+    color: #00A4DC;
+    font-size: 1.5em;
+    margin-bottom: 20px;
+}
+
+.modal-content p {
+    font-size: 0.9em;
+    color: #ccc;
+    margin-bottom: 30px;
+}
+
+.modal-content input[type=url] {
+    width: 100%;
+    padding: 15px;
+    font-size: 0.9em;
+    margin-bottom: 30px;
+    border-radius: 6px;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.modal-btn {
+    padding: 15px 30px;
+    font-size: 0.85em;
+    font-weight: bold;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+    width: auto;
+}
+
+.save-btn {
+    background: #00A4DC;
+    color: #fff;
+}
+
+.save-btn:hover, .save-btn:focus {
+    background: #00b4ec;
+    transform: scale(1.05);
+}
+
+.cancel-btn {
+    background: #333;
+    color: #ccc;
+}
+
+.cancel-btn:hover, .cancel-btn:focus {
+    background: #444;
+    color: #fff;
+    transform: scale(1.05);
 }

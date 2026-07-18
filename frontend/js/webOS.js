@@ -143,8 +143,6 @@
 
     // Custom button injection for Piano app
     function injectPianoButton() {
-        if (!window.PianoUrl) return;
-
         // 1. Sidebar/Drawer Injection
         var menu = document.querySelector('.mainDrawer-scrollContainer');
         if (!menu) {
@@ -173,14 +171,14 @@
             pianoBtn.onclick = function(e) {
                 e.preventDefault();
                 e.stopPropagation();
-                postMessage('openPianoApp', window.PianoUrl);
+                postMessage('openPianoApp', window.PianoUrl || '');
             };
 
             pianoBtn.onkeydown = function(e) {
                 if (e.keyCode === 13 || e.keyCode === 32) {
                     e.preventDefault();
                     e.stopPropagation();
-                    postMessage('openPianoApp', window.PianoUrl);
+                    postMessage('openPianoApp', window.PianoUrl || '');
                 }
             };
 
@@ -212,14 +210,14 @@
             headerBtn.onclick = function(e) {
                 e.preventDefault();
                 e.stopPropagation();
-                postMessage('openPianoApp', window.PianoUrl);
+                postMessage('openPianoApp', window.PianoUrl || '');
             };
 
             headerBtn.onkeydown = function(e) {
                 if (e.keyCode === 13 || e.keyCode === 32) {
                     e.preventDefault();
                     e.stopPropagation();
-                    postMessage('openPianoApp', window.PianoUrl);
+                    postMessage('openPianoApp', window.PianoUrl || '');
                 }
             };
 
@@ -230,12 +228,11 @@
 
     // 3. Remote Control Hotkeys Event Listener (Red: 403, Green: 404, Yellow: 405, Blue: 406, Play: 415, Pause: 19)
     document.addEventListener('keydown', function(e) {
-        if (!window.PianoUrl) return;
         var triggerKeys = [403, 404, 405, 406, 415, 19];
         if (triggerKeys.indexOf(e.keyCode) !== -1) {
             e.preventDefault();
             e.stopPropagation();
-            postMessage('openPianoApp', window.PianoUrl);
+            postMessage('openPianoApp', window.PianoUrl || '');
         }
     });
 

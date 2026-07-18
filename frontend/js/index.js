@@ -215,9 +215,6 @@ function Init() {
         var first_server = connected_servers[Object.keys(connected_servers)[0]]
         document.querySelector('#baseurl').value = first_server.baseurl;
         document.querySelector('#auto_connect').checked = first_server.auto_connect;
-        if (first_server.piano_url) {
-            document.querySelector('#pianourl').value = first_server.piano_url;
-        }
         if (window.performance && window.performance.navigation.type == window.performance.navigation.TYPE_BACK_FORWARD) {
             console.log('Got here using the browser "Back" or "Forward" button, inhibiting auto connect.');
         } else {
@@ -258,19 +255,18 @@ function normalizeUrl(url) {
 function handleServerSelect() {
     var baseurl = normalizeUrl(document.querySelector('#baseurl').value);
     var auto_connect = document.querySelector('#auto_connect').checked;
-    var piano_url = document.querySelector('#pianourl').value.trim();
 
     if (validURL(baseurl)) {
 
         displayConnecting();
-        console.log(baseurl, auto_connect, piano_url);
+        console.log(baseurl, auto_connect);
 
         if (curr_req) {
             console.log("There is an active request.");
             abort();
         }
         hideError();
-        getServerInfo(baseurl, auto_connect, piano_url);
+        getServerInfo(baseurl, auto_connect);
     } else {
         console.log(baseurl);
         displayError("Please enter a valid URL, it needs a scheme (http:// or https://), a hostname or IP (ex. jellyfin.local or 192.168.0.2) and a port (ex. :8096 or :8920).");
@@ -298,11 +294,11 @@ function hideConnecting() {
     document.querySelector('#busy').style.display = 'none';
     navigationInit();
 }
-function getServerInfo(baseurl, auto_connect, piano_url) {
+function getServerInfo(baseurl, auto_connect) {
     curr_req = ajax.request(normalizeUrl(baseurl + "/System/Info/Public"), {
         method: "GET",
         success: function (data) {
-            handleSuccessServerInfo(data, baseurl, auto_connect, piano_url);
+            handleSuccessServerInfo(data, baseurl, auto_connect);
         },
         error: handleFailure,
         abort: handleAbort,
@@ -331,7 +327,7 @@ function getConnectedServers() {
 }
 
 
-function handleSuccessServerInfo(data, baseurl, auto_connect, piano_url) {
+function handleSuccessServerInfo(data, baseurl, auto_connect) {
     curr_req = false;
 
     connected_servers = getConnectedServers();
@@ -351,7 +347,7 @@ function handleSuccessServerInfo(data, baseurl, auto_connect, piano_url) {
     }
 
 
-    connected_servers = lruStrategy(connected_servers,4, { 'baseurl': baseurl, 'auto_connect': auto_connect, 'id': data.Id, 'Name':data.ServerName, 'piano_url': piano_url })
+    connected_servers = lruStrategy(connected_servers,4, { 'baseurl': baseurl, 'auto_connect': auto_connect, 'id': data.Id, 'Name':data.ServerName })
 
     storage.set('connected_servers', connected_servers);
 
@@ -395,7 +391,8 @@ function handleSuccessManifest(data, baseurl) {
 
         // avoid Promise as it's buggy in some WebOS
             getTextToInject(function (bundle) {
-                handoff(hosturl, bundle, info['piano_url']);
+                var piano_url = storage.get('piano_url') || '';
+                handoff(hosturl, bundle, piano_url);
             }, function (error) {
                 console.error(error);
                 displayError(error);
@@ -627,10 +624,6 @@ function renderSingleServer(server_id, server) {
     btn.onclick = function () {
         var urlfield = document.getElementById("baseurl");
         urlfield.value = server.baseurl || this.value;
-        var pianofield = document.getElementById("pianourl");
-        if (pianofield) {
-            pianofield.value = server.piano_url || '';
-        }
         handleServerSelect();
     };
     server_card.appendChild(btn);
@@ -719,3 +712,54 @@ function stopDiscovery() {
 }
 
 startDiscovery();
+
+/* Piano Web App Settings Modal Logic */
+function showPianoSettings() {
+    var modal = document.querySelector('#pianoSettingsModal');
+    var input = document.querySelector('#modalPianoUrl');
+    
+    var currentUrl = storage.get('piano_url') || 'http://192.168.1.8:8000/';
+    input.value = currentUrl;
+    
+    modal.style.display = '';
+    
+    setTimeout(function() {
+        input.focus();
+    }, 100);
+}
+
+function closePianoSettings() {
+    var modal = document.querySelector('#pianoSettingsModal');
+    modal.style.display = 'none';
+    
+    var pianoContainer = document.querySelector('#pianoContainer');
+    if (pianoContainer && pianoContainer.style.display === 'none') {
+        var contentFrame = document.querySelector('#contentFrame');
+        if (contentFrame) {
+            contentFrame.focus();
+        }
+    } else {
+        var backBtn = document.querySelector('.floating-back-btn');
+        if (backBtn) {
+            backBtn.focus();
+        }
+    }
+}
+
+function savePianoSettings() {
+    var input = document.querySelector('#modalPianoUrl');
+    var url = input.value.trim();
+    
+    if (url) {
+        if (url.indexOf("http://") !== 0 && url.indexOf("https://") !== 0) {
+            url = "http://" + url;
+        }
+        
+        storage.set('piano_url', url);
+        closePianoSettings();
+        
+        openPianoApp(url);
+    } else {
+        alert("Please enter a valid URL.");
+    }
+}
