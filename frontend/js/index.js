@@ -513,20 +513,37 @@ function handoff(url, bundle, piano_url) {
 
     function onLoad() {
         clearInterval(timer);
-        contentFrame.contentDocument.removeEventListener('DOMContentLoaded', onLoad);
-        contentFrame.removeEventListener('load', onLoad);
-
-        injectScriptText(contentFrame.contentDocument, 'window.AppInfo = ' + JSON.stringify(appInfo) + ';');
-        injectScriptText(contentFrame.contentDocument, 'window.DeviceInfo = ' + JSON.stringify(deviceInfo) + ';');
-        injectScriptText(contentFrame.contentDocument, 'window.PianoUrl = ' + JSON.stringify(piano_url) + ';');
-
-        if (bundle.js) {
-            injectScriptText(contentFrame.contentDocument, bundle.js);
+        try {
+            contentFrame.contentDocument.removeEventListener('DOMContentLoaded', onLoad);
+            contentFrame.removeEventListener('load', onLoad);
+        } catch (e) {
+            console.warn("Could not remove event listeners on load:", e);
         }
 
-        if (bundle.css) {
-            injectStyleText(contentFrame.contentDocument, bundle.css);
+        try {
+            var doc = contentFrame.contentDocument;
+            if (doc) {
+                injectScriptText(doc, 'window.AppInfo = ' + JSON.stringify(appInfo) + ';');
+                injectScriptText(doc, 'window.DeviceInfo = ' + JSON.stringify(deviceInfo) + ';');
+                injectScriptText(doc, 'window.PianoUrl = ' + JSON.stringify(piano_url) + ';');
+
+                if (bundle.js) {
+                    injectScriptText(doc, bundle.js);
+                }
+
+                if (bundle.css) {
+                    injectStyleText(doc, bundle.css);
+                }
+                console.log("Custom scripts successfully injected into iframe.");
+            } else {
+                console.warn("iframe contentDocument is inaccessible.");
+            }
+        } catch (e) {
+            console.error("Iframe script injection blocked by browser security (cross-origin):", e);
         }
+
+        // Always show the parent floating button on load/navigation activity
+        resetTriggerVisibility();
     }
 
     function onUnload() {
@@ -763,3 +780,41 @@ function savePianoSettings() {
         alert("Please enter a valid URL.");
     }
 }
+
+/* TV Overlay Fade-out on Inactivity Logic */
+var triggerTimeout;
+function resetTriggerVisibility() {
+    var btn = document.querySelector('#parentPianoTrigger');
+    if (!btn) return;
+    
+    var pianoContainer = document.querySelector('#pianoContainer');
+    if (pianoContainer && pianoContainer.style.display !== 'none') {
+        btn.style.display = 'none';
+        return;
+    }
+
+    btn.style.display = '';
+    btn.style.opacity = '0.6';
+    
+    clearTimeout(triggerTimeout);
+    triggerTimeout = setTimeout(function() {
+        btn.style.opacity = '0';
+        setTimeout(function() {
+            if (btn.style.opacity === '0') {
+                btn.style.display = 'none';
+            }
+        }, 500);
+    }, 4000);
+}
+
+// Bind reset visibility to user inputs
+window.addEventListener('mousemove', resetTriggerVisibility);
+window.addEventListener('keydown', resetTriggerVisibility);
+window.addEventListener('click', resetTriggerVisibility);
+
+// Also make sure when piano is closed, the floating trigger is shown again
+var originalClosePianoApp = closePianoApp;
+closePianoApp = function() {
+    originalClosePianoApp();
+    resetTriggerVisibility();
+};

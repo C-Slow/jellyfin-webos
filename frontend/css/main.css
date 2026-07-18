@@ -319,3 +319,39 @@ input[type=checkbox]:focus {
     color: #fff;
     transform: scale(1.05);
 }
+
+/* Fallback Parent Trigger Button Styles */
+.parent-piano-trigger-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: rgba(0, 164, 220, 0.4);
+    color: #FFF;
+    border: none;
+    z-index: 9998;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(5px);
+    transition: opacity 0.5s ease, transform 0.3s ease, background-color 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    outline: none;
+    opacity: 0; /* Starts hidden, fades in on interaction */
+}
+
+.parent-piano-trigger-btn:hover,
+.parent-piano-trigger-btn:focus {
+    background: rgba(0, 164, 220, 0.95);
+    transform: scale(1.1);
+    box-shadow: 0 6px 15px rgba(0, 164, 220, 0.4);
+}
+
+.parent-piano-trigger-btn svg {
+    fill: currentColor;
+    width: 32px;
+    height: 32px;
+}
