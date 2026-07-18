@@ -99,12 +99,25 @@ function backPressed() {
 function openPianoApp(url) {
     var pianoContainer = document.querySelector('#pianoContainer');
     var pianoFrame = document.querySelector('#pianoFrame');
+    
+    // Hide the fallback trigger button when piano is open
+    var parentPianoTrigger = document.querySelector('#parentPianoTrigger');
+    if (parentPianoTrigger) {
+        parentPianoTrigger.style.display = 'none';
+    }
+
     if (!url) {
-        alert("Piano Web App URL not configured! Please configure it on the connection screen.");
+        url = storage.get('piano_url', false) || '';
+    }
+
+    if (!url) {
+        showPianoSettings();
         return;
     }
+
     pianoFrame.src = url;
     pianoContainer.style.display = '';
+    
     setTimeout(function() {
         var backBtn = document.querySelector('.floating-back-btn');
         if (backBtn) {
@@ -118,6 +131,13 @@ function closePianoApp() {
     var pianoFrame = document.querySelector('#pianoFrame');
     pianoContainer.style.display = 'none';
     pianoFrame.src = '';
+    
+    // Show the fallback trigger button again when piano is closed
+    var parentPianoTrigger = document.querySelector('#parentPianoTrigger');
+    if (parentPianoTrigger) {
+        parentPianoTrigger.style.display = '';
+    }
+
     var contentFrame = document.querySelector('#contentFrame');
     if (contentFrame) {
         contentFrame.focus();
@@ -391,7 +411,7 @@ function handleSuccessManifest(data, baseurl) {
 
         // avoid Promise as it's buggy in some WebOS
             getTextToInject(function (bundle) {
-                var piano_url = storage.get('piano_url') || '';
+                var piano_url = storage.get('piano_url', false) || '';
                 handoff(hosturl, bundle, piano_url);
             }, function (error) {
                 console.error(error);
@@ -543,7 +563,10 @@ function handoff(url, bundle, piano_url) {
         }
 
         // Always show the parent floating button on load/navigation activity
-        resetTriggerVisibility();
+        var parentPianoTrigger = document.querySelector('#parentPianoTrigger');
+        if (parentPianoTrigger) {
+            parentPianoTrigger.style.display = '';
+        }
     }
 
     function onUnload() {
@@ -735,7 +758,7 @@ function showPianoSettings() {
     var modal = document.querySelector('#pianoSettingsModal');
     var input = document.querySelector('#modalPianoUrl');
     
-    var currentUrl = storage.get('piano_url') || 'http://192.168.1.8:8000/';
+    var currentUrl = storage.get('piano_url', false) || 'http://192.168.1.8:8000/';
     input.value = currentUrl;
     
     modal.style.display = '';
@@ -772,7 +795,7 @@ function savePianoSettings() {
             url = "http://" + url;
         }
         
-        storage.set('piano_url', url);
+        storage.set('piano_url', url, false);
         closePianoSettings();
         
         openPianoApp(url);
@@ -780,41 +803,3 @@ function savePianoSettings() {
         alert("Please enter a valid URL.");
     }
 }
-
-/* TV Overlay Fade-out on Inactivity Logic */
-var triggerTimeout;
-function resetTriggerVisibility() {
-    var btn = document.querySelector('#parentPianoTrigger');
-    if (!btn) return;
-    
-    var pianoContainer = document.querySelector('#pianoContainer');
-    if (pianoContainer && pianoContainer.style.display !== 'none') {
-        btn.style.display = 'none';
-        return;
-    }
-
-    btn.style.display = '';
-    btn.style.opacity = '0.6';
-    
-    clearTimeout(triggerTimeout);
-    triggerTimeout = setTimeout(function() {
-        btn.style.opacity = '0';
-        setTimeout(function() {
-            if (btn.style.opacity === '0') {
-                btn.style.display = 'none';
-            }
-        }, 500);
-    }, 4000);
-}
-
-// Bind reset visibility to user inputs
-window.addEventListener('mousemove', resetTriggerVisibility);
-window.addEventListener('keydown', resetTriggerVisibility);
-window.addEventListener('click', resetTriggerVisibility);
-
-// Also make sure when piano is closed, the floating trigger is shown again
-var originalClosePianoApp = closePianoApp;
-closePianoApp = function() {
-    originalClosePianoApp();
-    resetTriggerVisibility();
-};
