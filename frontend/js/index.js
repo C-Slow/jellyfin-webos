@@ -142,6 +142,19 @@ document.onkeydown = function (evt) {
         case 461: // Back
             backPressed();
             break;
+        case 403: // Red
+        case 404: // Green
+        case 405: // Yellow
+        case 406: // Blue
+        case 415: // Play
+        case 19:  // Pause
+            var pianoContainer = document.querySelector('#pianoContainer');
+            if (pianoContainer && pianoContainer.style.display !== 'none') {
+                closePianoApp();
+                evt.preventDefault();
+                evt.stopPropagation();
+            }
+            break;
     }
 };
 
