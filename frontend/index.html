@@ -43,15 +43,6 @@
 	</div>
 	<iframe id="contentFrame" style="display: none;"></iframe>
 	<div id="pianoContainer" style="display: none;">
-		<div class="floating-controls">
-			<button class="floating-btn floating-back-btn" onclick="closePianoApp();" tabindex="10">
-				<svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
-				Back to Jellyfin
-			</button>
-			<button class="floating-btn floating-settings-btn" onclick="showPianoSettings();" tabindex="11" title="Piano App Settings">
-				<svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
-			</button>
-		</div>
 		<iframe id="pianoFrame"></iframe>
 	</div>
 
@@ -68,10 +59,16 @@
 		</div>
 	</div>
 
-	<!-- Fallback floating button in parent document (fades out on inactivity) -->
-	<button id="parentPianoTrigger" class="parent-piano-trigger-btn" onclick="openPianoApp();" style="display: none;" tabindex="5" title="Open Piano">
-		<svg viewBox="0 0 24 24"><path d="M19,3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.89 20.1,3 19,3M19,5V15H17.5V5H19M16,5V15H14.5V5H16M13,5V15H11.5V5H13M10,5V15H8.5V5H10M7,5V15H5V5H7M5,19V17H7.5V19H5M8.5,19V17H10V19H8.5M11.5,19V17H13V19H11.5M14.5,19V17H16V19H14.5M17.5,19V17H19V19H17.5Z"/></svg>
-	</button>
+	<!-- Fallback floating button in parent document (persistent, semi-transparent HUD) -->
+	<div id="parentPianoControls" class="parent-piano-controls">
+		<button id="parentPianoSettings" class="parent-btn parent-settings-btn" onclick="showPianoSettings();" style="display: none;" tabindex="6" title="Piano App Settings">
+			<svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+		</button>
+		<button id="parentPianoTrigger" class="parent-btn parent-trigger-btn" onclick="togglePianoApp();" style="display: none;" tabindex="5" title="Open Piano">
+			<svg id="pianoIconSvg" viewBox="0 0 24 24"><path d="M19,3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.89 20.1,3 19,3M19,5V15H17.5V5H19M16,5V15H14.5V5H16M13,5V15H11.5V5H13M10,5V15H8.5V5H10M7,5V15H5V5H7M5,19V17H7.5V19H5M8.5,19V17H10V19H8.5M11.5,19V17H13V19H11.5M14.5,19V17H16V19H14.5M17.5,19V17H19V19H17.5Z"/></svg>
+			<svg id="closeIconSvg" viewBox="0 0 24 24" style="display: none;"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+		</button>
+	</div>
 </body>
 
 </html>

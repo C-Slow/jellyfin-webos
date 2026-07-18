@@ -179,60 +179,57 @@ input[type=checkbox]:focus {
     height: 100%;
 }
 
-.floating-controls {
+.parent-piano-controls {
     position: absolute;
-    top: 30px;
-    right: 30px;
-    z-index: 10000;
+    top: 25px;
+    right: 25px;
+    z-index: 10000; /* Placed over everything */
     display: flex;
     gap: 15px;
 }
 
-.floating-btn {
-    background: rgba(0, 164, 220, 0.85); /* Matches jellyfin blue with transparency */
+.parent-btn {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    background: rgba(0, 164, 220, 0.4);
     color: #FFF;
     border: none;
-    border-radius: 50px;
-    font-size: 0.8em;
-    font-weight: bold;
-    padding: 15px;
     cursor: pointer;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(5px);
     transition: all 0.3s ease;
     display: flex;
     align-items: center;
     justify-content: center;
     outline: none;
+    opacity: 0.2; /* Faintly visible by default */
 }
 
-.floating-back-btn {
-    padding: 15px 30px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+.parent-btn:hover,
+.parent-btn:focus {
+    background: rgba(0, 164, 220, 0.95);
+    transform: scale(1.1);
+    box-shadow: 0 6px 15px rgba(0, 164, 220, 0.4);
+    opacity: 1.0; /* Fully visible on focus/hover */
 }
 
-.floating-settings-btn {
-    border-radius: 50%;
-    width: 60px;
-    height: 60px;
-}
-
-.floating-btn:hover,
-.floating-btn:focus {
-    background: #00A4DC;
-    transform: scale(1.05);
-    box-shadow: 0 6px 20px rgba(0, 164, 220, 0.4);
-}
-
-.floating-btn svg {
+.parent-btn svg {
     fill: currentColor;
-    width: 24px;
-    height: 24px;
+    width: 28px;
+    height: 28px;
 }
 
-.floating-back-btn svg {
-    margin-right: 10px;
+.parent-settings-btn {
+    background: rgba(80, 80, 80, 0.4);
+}
+
+.parent-settings-btn:hover,
+.parent-settings-btn:focus {
+    background: rgba(120, 120, 120, 0.9);
+    transform: scale(1.1);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+    opacity: 1.0;
 }
 
 /* Premium Modal Styles */
@@ -320,38 +317,4 @@ input[type=checkbox]:focus {
     transform: scale(1.05);
 }
 
-/* Fallback Parent Trigger Button Styles */
-.parent-piano-trigger-btn {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    background: rgba(0, 164, 220, 0.4);
-    color: #FFF;
-    border: none;
-    z-index: 9998;
-    cursor: pointer;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-    backdrop-filter: blur(5px);
-    transition: opacity 0.5s ease, transform 0.3s ease, background-color 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    outline: none;
-    opacity: 0; /* Starts hidden, fades in on interaction */
-}
 
-.parent-piano-trigger-btn:hover,
-.parent-piano-trigger-btn:focus {
-    background: rgba(0, 164, 220, 0.95);
-    transform: scale(1.1);
-    box-shadow: 0 6px 15px rgba(0, 164, 220, 0.4);
-}
-
-.parent-piano-trigger-btn svg {
-    fill: currentColor;
-    width: 32px;
-    height: 32px;
-}

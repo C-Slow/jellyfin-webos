@@ -96,15 +96,28 @@ function backPressed() {
     }
 }
 
+function togglePianoApp() {
+    var pianoContainer = document.querySelector('#pianoContainer');
+    if (pianoContainer && pianoContainer.style.display !== 'none') {
+        closePianoApp();
+    } else {
+        openPianoApp();
+    }
+}
+
 function openPianoApp(url) {
     var pianoContainer = document.querySelector('#pianoContainer');
     var pianoFrame = document.querySelector('#pianoFrame');
     
-    // Hide the fallback trigger button when piano is open
-    var parentPianoTrigger = document.querySelector('#parentPianoTrigger');
-    if (parentPianoTrigger) {
-        parentPianoTrigger.style.display = 'none';
-    }
+    // Toggle Svg icons on the button to indicate Close state
+    var pianoIcon = document.querySelector('#pianoIconSvg');
+    var closeIcon = document.querySelector('#closeIconSvg');
+    if (pianoIcon) pianoIcon.style.display = 'none';
+    if (closeIcon) closeIcon.style.display = '';
+
+    // Show settings button next to toggle
+    var settingsBtn = document.querySelector('#parentPianoSettings');
+    if (settingsBtn) settingsBtn.style.display = '';
 
     if (!url) {
         url = storage.get('piano_url', false) || '';
@@ -117,13 +130,6 @@ function openPianoApp(url) {
 
     pianoFrame.src = url;
     pianoContainer.style.display = '';
-    
-    setTimeout(function() {
-        var backBtn = document.querySelector('.floating-back-btn');
-        if (backBtn) {
-            backBtn.focus();
-        }
-    }, 100);
 }
 
 function closePianoApp() {
@@ -132,11 +138,15 @@ function closePianoApp() {
     pianoContainer.style.display = 'none';
     pianoFrame.src = '';
     
-    // Show the fallback trigger button again when piano is closed
-    var parentPianoTrigger = document.querySelector('#parentPianoTrigger');
-    if (parentPianoTrigger) {
-        parentPianoTrigger.style.display = '';
-    }
+    // Toggle Svg icons on the button back to piano
+    var pianoIcon = document.querySelector('#pianoIconSvg');
+    var closeIcon = document.querySelector('#closeIconSvg');
+    if (pianoIcon) pianoIcon.style.display = '';
+    if (closeIcon) closeIcon.style.display = 'none';
+
+    // Hide settings button
+    var settingsBtn = document.querySelector('#parentPianoSettings');
+    if (settingsBtn) settingsBtn.style.display = 'none';
 
     var contentFrame = document.querySelector('#contentFrame');
     if (contentFrame) {
