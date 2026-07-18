@@ -25,14 +25,15 @@
 			<p id="error" style="display: none;">&nbsp;</p>
 			<form onsubmit="return false;">
 				<input type="url" id="baseurl" name="baseurl" placeholder="http://jellyfin.local:8096" tabindex="0" />
+				<input type="url" id="pianourl" name="pianourl" placeholder="http://192.168.1.8:8000/ (MIDI-eval-Times)" tabindex="1" />
 				<div class="checkbox-wrapper">
 					<input type="checkbox" id="auto_connect" name="auto_connect"
 						onclick="return handleCheckbox(this, true);"
 						onkeydown="return handleCheckbox(this, event);"
-						tabindex="1" value="1" />
+						tabindex="2" value="1" />
 					<label for="auto_connect">Automatically connect on app launch.</label>
 				</div>
-				<button id="connect" type="button" onclick="return handleServerSelect();" tabindex="2">Connect</button>
+				<button id="connect" type="button" onclick="return handleServerSelect();" tabindex="3">Connect</button>
 				<ul id="serverlist"></ul>
 			</form>
 		</div>
@@ -42,6 +43,13 @@
 		</div>
 	</div>
 	<iframe id="contentFrame" style="display: none;"></iframe>
+	<div id="pianoContainer" style="display: none;">
+		<button class="floating-back-btn" onclick="closePianoApp();" tabindex="10">
+			<svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+			Back to Jellyfin
+		</button>
+		<iframe id="pianoFrame"></iframe>
+	</div>
 </body>
 
 </html>
